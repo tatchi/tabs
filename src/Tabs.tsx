@@ -1,20 +1,21 @@
 import React, { FC, useMemo, useState } from 'react';
 
+type PanelType = HTMLDivElement;
+type TabType = HTMLButtonElement;
+
 export const useTabState = ({
   defaultActiveTab,
 }: {
   defaultActiveTab?: string | null;
 } = {}) => {
-  const [tabs, setTabs] = React.useState<(HTMLButtonElement | string)[]>([]);
-  const [panels, setPanels] = React.useState<(HTMLDivElement | string)[]>([]);
+  const [tabs, setTabs] = React.useState<(TabType | string)[]>([]);
+  const [panels, setPanels] = React.useState<(PanelType | string)[]>([]);
   const [activeTab, setActiveTab] = useState<
-    undefined | null | string | HTMLButtonElement
+    undefined | null | string | TabType
   >(defaultActiveTab);
 
-  console.log({ tabs, panels });
-
   const registerTab = React.useCallback(
-    (tab: HTMLButtonElement | null) => {
+    (tab: TabType | null) => {
       if (tab == null) {
         return;
       }
@@ -32,7 +33,7 @@ export const useTabState = ({
     },
     [activeTab]
   );
-  const registerPanel = React.useCallback((panel: HTMLDivElement | null) => {
+  const registerPanel = React.useCallback((panel: PanelType | null) => {
     if (panel == null) {
       return;
     }
@@ -41,7 +42,7 @@ export const useTabState = ({
   }, []);
 
   const getIsActiveTab = React.useCallback(
-    (tab: HTMLButtonElement | null) => {
+    (tab: TabType | null) => {
       if (tab == null) {
         return false;
       }
@@ -51,7 +52,7 @@ export const useTabState = ({
     [activeTab]
   );
   const getIsActivePanel = React.useCallback(
-    (panel: HTMLDivElement | null) => {
+    (panel: PanelType | null) => {
       if (panel == null) {
         return false;
       }
@@ -100,7 +101,7 @@ const TabList: FC<React.ComponentProps<'div'>> = ({
   </div>
 );
 
-type TabPanelProps = {} & React.ComponentProps<'div'>;
+type TabPanelProps = React.ComponentProps<'div'>;
 
 const TabPanel: FC<TabPanelProps & useTabStateReturnValues> = ({
   children,
@@ -113,7 +114,7 @@ const TabPanel: FC<TabPanelProps & useTabStateReturnValues> = ({
   getIsActiveTab,
   ...rest
 }) => {
-  const panelRef = React.useRef<HTMLDivElement>(null);
+  const panelRef = React.useRef<PanelType>(null);
 
   const isActive = getIsActivePanel(panelRef.current);
 
@@ -130,7 +131,7 @@ const TabPanel: FC<TabPanelProps & useTabStateReturnValues> = ({
   );
 };
 
-type TabProps = {} & React.ComponentProps<'button'>;
+type TabProps = React.ComponentProps<'button'>;
 
 export const Tab: FC<TabProps & useTabStateReturnValues> = ({
   children,
@@ -141,7 +142,7 @@ export const Tab: FC<TabProps & useTabStateReturnValues> = ({
   getIsActiveTab,
   activeTab,
 }) => {
-  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const buttonRef = React.useRef<TabType>(null);
 
   const isActive = getIsActiveTab(buttonRef.current);
 
