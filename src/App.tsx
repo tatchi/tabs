@@ -1,20 +1,20 @@
 import * as React from 'react';
-import { Breadcrumb } from './Breadcrumb';
-import { Tabs } from './Tabs';
+import { Tabs, useTabState } from './Tabs';
 
 export default function App() {
+  const tab = useTabState();
   return (
-    <Tabs>
+    <>
       <Tabs.List>
-        <Tabs.Tab id="tab1">
+        <Tabs.Tab {...tab}>
           <span>tab1</span>
         </Tabs.Tab>
-        <Tabs.Tab id="tab2">
+        <Tabs.Tab {...tab}>
           <span>tab2</span>
         </Tabs.Tab>
       </Tabs.List>
-        <Tabs.Panel id="tab1">content1</Tabs.Panel>
-        <Tabs.Panel id="tab2">content2</Tabs.Panel>
-    </Tabs>
+        <Tabs.Panel {...tab}>content1</Tabs.Panel>
+        <Tabs.Panel {...tab}>content2</Tabs.Panel>
+    </>
   );
 }
