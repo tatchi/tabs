@@ -38,13 +38,9 @@ const TabList: FC<React.ComponentProps<'div'>> = ({
   </div>
 );
 
-const TabContents: FC = ({ children, ...rest }) => (
-  <div {...rest}>{children}</div>
-);
-
 type TabPanelProps = {} & React.ComponentProps<'div'>;
 
-const TabContent: FC<TabPanelProps> = ({ children, id, ...rest }) => {
+const TabPanel: FC<TabPanelProps> = ({ children, id, ...rest }) => {
   const { activeTab, registerContent, getIsActiveContent } = useContext(
     context
   );
@@ -124,8 +120,7 @@ export type TabsProps = {
 type TabsCompoundComponents = {
   List: typeof TabList;
   Tab: typeof Tab;
-  Contents: typeof TabContents;
-  Content: typeof TabContent;
+  Panel: typeof TabPanel;
 };
 
 export const Tabs: FC<TabsProps & React.ComponentProps<'div'>> &
@@ -193,5 +188,4 @@ export const Tabs: FC<TabsProps & React.ComponentProps<'div'>> &
 
 Tabs.List = TabList;
 Tabs.Tab = Tab;
-Tabs.Contents = TabContents;
-Tabs.Content = TabContent;
+Tabs.Panel = TabPanel;

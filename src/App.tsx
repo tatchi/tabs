@@ -13,10 +13,8 @@ export default function App() {
           <span>tab2</span>
         </Tabs.Tab>
       </Tabs.List>
-      {/* <Tabs.Contents> */}
-        <Tabs.Content id="tab1">content1</Tabs.Content>
-        <Tabs.Content id="tab2">content2</Tabs.Content>
-      {/* </Tabs.Contents> */}
+        <Tabs.Panel id="tab1">content1</Tabs.Panel>
+        <Tabs.Panel id="tab2">content2</Tabs.Panel>
     </Tabs>
   );
 }
