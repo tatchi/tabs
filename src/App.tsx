@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Tabs, useTabState } from './Tabs';
 
 export default function App() {
-  const tab = useTabState({ defaultActiveTab: undefined });
+  const tab = useTabState();
 
   return (
     <>

@@ -15,16 +15,17 @@ export const useTabState = ({
   >(defaultActiveTab);
 
   const registerTab = React.useCallback(
-    (tab: TabType | null) => {
-      if (tab == null) {
-        return;
-      }
-      const tabId = tab.id || tab;
-      setTabs((tabs) => [tabId, ...tabs]);
+    (tab: TabType | string) => {
+      setTabs((tabs) => {
+        if (tabs.find((t) => t === tab)) {
+          return tabs;
+        }
+        return [tab, ...tabs];
+      });
       if (activeTab === undefined) {
         setActiveTab((currActiveTab) => {
           if (currActiveTab === undefined) {
-            return tabId;
+            return tab;
           } else {
             return currActiveTab;
           }
@@ -33,32 +34,20 @@ export const useTabState = ({
     },
     [activeTab]
   );
-  const registerPanel = React.useCallback((panel: PanelType | null) => {
-    if (panel == null) {
-      return;
-    }
-    const panelId = panel.id || panel;
-    setPanels((panels) => [panelId, ...panels]);
+  const registerPanel = React.useCallback((panel: PanelType | string) => {
+    setPanels((panels) => [panel, ...panels]);
   }, []);
 
   const getIsActiveTab = React.useCallback(
-    (tab: TabType | null) => {
-      if (tab == null) {
-        return false;
-      }
-      const tabId = tab.id || tab;
-      return activeTab === tabId;
+    (tab: TabType | string) => {
+      return activeTab === tab;
     },
     [activeTab]
   );
   const getIsActivePanel = React.useCallback(
-    (panel: PanelType | null) => {
-      if (panel == null) {
-        return false;
-      }
-      const panelId = panel.id || panel;
+    (panel: PanelType | string) => {
       const activeTabIndex = tabs.findIndex((tab) => tab === activeTab);
-      const panelIndex = panels.findIndex((currPanel) => currPanel === panelId);
+      const panelIndex = panels.findIndex((currPanel) => currPanel === panel);
 
       if (activeTabIndex < 0 || panelIndex < 0) {
         return false;
@@ -116,10 +105,19 @@ const TabPanel: FC<TabPanelProps & useTabStateReturnValues> = ({
 }) => {
   const panelRef = React.useRef<PanelType>(null);
 
-  const isActive = getIsActivePanel(panelRef.current);
+  const isActive = React.useMemo(() => {
+    if (id) {
+      return getIsActivePanel(id);
+    } else if (panelRef.current) {
+      return getIsActivePanel(panelRef.current);
+    }
+    return false;
+  }, [getIsActivePanel, id]);
 
   React.useEffect(() => {
-    if (panelRef.current !== null) {
+    if (id) {
+      registerPanel(id);
+    } else if (panelRef.current) {
       registerPanel(panelRef.current);
     }
   }, [id, registerPanel]);
@@ -142,17 +140,28 @@ export const Tab: FC<TabProps & useTabStateReturnValues> = ({
   getIsActiveTab,
   activeTab,
 }) => {
-  const buttonRef = React.useRef<TabType>(null);
+  const tabRef = React.useRef<TabType>(null);
 
-  const isActive = getIsActiveTab(buttonRef.current);
+  const isActive = React.useMemo(() => {
+    if (id) {
+      return getIsActiveTab(id);
+    } else if (tabRef.current) {
+      return getIsActiveTab(tabRef.current);
+    }
+    return false;
+  }, [getIsActiveTab, id]);
 
   React.useEffect(() => {
-    registerTab(buttonRef.current);
+    if (id) {
+      registerTab(id);
+    } else if (tabRef.current) {
+      registerTab(tabRef.current);
+    }
   }, [id, registerTab]);
 
   return (
     <button
-      ref={buttonRef}
+      ref={tabRef}
       id={id}
       type="button"
       style={{
@@ -165,11 +174,11 @@ export const Tab: FC<TabProps & useTabStateReturnValues> = ({
         ...style,
       }}
       onClick={() => {
-        if (buttonRef.current) {
+        if (tabRef.current) {
           if (id) {
             setActiveTab(id);
           } else {
-            setActiveTab(buttonRef.current);
+            setActiveTab(tabRef.current);
           }
         }
       }}
